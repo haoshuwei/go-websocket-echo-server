@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"net/http"
 	"strings"
@@ -153,6 +154,7 @@ func (ws *Ws) Recv() (Frame, error) {
 	if err != nil {
 		return frame, err
 	}
+	log.Println("header: ",head[0], head[1])
 
 	frame.IsFragment = (head[0] & 0x80) == 0x00
 	frame.Opcode = head[0] & 0x0F

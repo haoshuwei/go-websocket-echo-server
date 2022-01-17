@@ -28,7 +28,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("frame.Opcode: %v", frame.Opcode)
+		log.Printf("frame.Opcode: %v\n", frame.Opcode)
 		switch frame.Opcode {
 		case 8: // Close
 			return
