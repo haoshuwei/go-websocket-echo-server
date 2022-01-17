@@ -154,7 +154,6 @@ func (ws *Ws) Recv() (Frame, error) {
 	if err != nil {
 		return frame, err
 	}
-	log.Println("header: ",head[0], head[1])
 
 	frame.IsFragment = (head[0] & 0x80) == 0x00
 	frame.Opcode = head[0] & 0x0F
@@ -162,8 +161,16 @@ func (ws *Ws) Recv() (Frame, error) {
 
 	frame.IsMasked = (head[1] & 0x80) == 0x80
 
+
 	var length uint64
 	length = uint64(head[1] & 0x7F)
+
+	log.Println("header: ",head[0], head[1])
+	log.Println("frame.IsFragment: ",frame.IsFragment)
+	log.Println("frame.Opcode: ",frame.Opcode)
+	log.Println("frame.Reserved: ",frame.Reserved)
+	log.Println("frame.IsMasked: ",frame.IsMasked)
+	log.Println("length: ",length)
 
 	if length == 126 {
 		data, err := ws.read(2)
@@ -183,6 +190,7 @@ func (ws *Ws) Recv() (Frame, error) {
 		return frame, err
 	}
 	frame.Length = length
+	log.Println("frame.Length: ",frame.Length)
 
 	payload, err := ws.read(int(length)) // possible data loss
 	if err != nil {
@@ -193,6 +201,7 @@ func (ws *Ws) Recv() (Frame, error) {
 		payload[i] ^= mask[i%4]
 	}
 	frame.Payload = payload
+	log.Println("payload: ",string(payload))
 	err = ws.validate(&frame)
 	return frame, err
 }
